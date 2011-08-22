@@ -172,9 +172,11 @@ CONTAINS
         icompress=1 
 
         !     - Create VIS5D file -
+print*,'passou 2'
         iflag=v5dcreate(v5dfile,ntime,nvar,clat2-clat1+1,clon2-clon1+1, &
              outnl,cname,itime_stamp,idate_stamp,icompress, &
              iproj,proj_arg,ivert,vert_arg)
+print*,'passou 3'
         if(iflag.ne.1) then
            print*, 'v5dcreate error: ', iflag
            stop

@@ -18,15 +18,15 @@ PROGRAM = g2vis5d
 #CFLAGS = -c -O0 -DUNDERSCORE
 #
 # Intel
-CC = icc
-CFLAGS = -c -O0 -DUNDERSCORE -g -debug 
+CC = gcc
+CFLAGS = -c -O0 -DUNDERSCORE -Wall -g -fbounds-check
 
 # === FORTRAN90 COMPILER ---
 
-FFLAGS = -c -O0 -warn all  -g -debug 
+FFLAGS = -c -O0 -Wall  -g -fbounds-check
 #FLOAD = -O0 -Wl,--rpath -Wl,/opt/NECcomp/compiler90/ia64/lib
 FLOAD = -O0
-F77 = ifort
+F77 = gfortran
 LIBS = -lm
 
 OBJECTS = \
@@ -74,4 +74,4 @@ v5d.o:  v5d.c
 	$(CC) $(CFLAGS) v5d.c -o v5d.o
 
 clean: 
-	rm $(OBJECTS) $(PROGRAM) *.mod *~
+	rm -f $(OBJECTS) $(PROGRAM) *.mod *~
