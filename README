@@ -1,0 +1,35 @@
+HISTORY
+
+This project is an unofficial fork of the GrADS plain-binary to vis5d
+format converter distributed with the good old vis5d+. 
+
+More information about GrADS on their official webpage:
+
+www.iges.org/grads/
+
+More information about vis5d+ on their official webpage, but the
+project's last update was on 2002-04-11. 
+
+vis5d.sourceforge.net/
+
+The original grads_2_vis5d.f fortran77 file can be found inside
+contrib/grads directory. Unfortunately, it is completely undocumented
+and don't even mention the authors. More over, it will not compile at
+all on newer linux systems.
+
+ABOUT THIS PROJECT
+
+I have changed everything to Fortran 90, divided the original file
+into meanfull modules and added new functionalities like pressure to
+height conversion. Now it works with gfortran standard.
+
+ABOUT ME
+
+Want to contribute or use it? Contact me!
+
+hmj.barbosa+git [at] gmail (dot) com
+
+
+
+
+

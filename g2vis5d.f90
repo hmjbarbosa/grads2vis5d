@@ -157,9 +157,11 @@ PROGRAM g2vis5d
              do ilev=1,outnl(ivw)
                 do j=nlat+1-clat2,nlat+1-clat1
                    do i=clon1,clon2
-                      if((vgrid(j,i,ilev,ivw).ne.undef).and.(vgrid(j,i,ilev,ivt).ne.undef)) then
+                      if(  (vgrid(j,i,ilev,ivw).ne.undef).and. &
+                           (vgrid(j,i,ilev,ivt).ne.undef)) then
                          ! dz = - dP * R * T / g P
-                         vgrid(j,i,ilev,ivw) = - vgrid(j,i,ilev,ivw) * vgrid(j,i,ilev,ivt) * fact / p(ilev)
+                         vgrid(j,i,ilev,ivw) = - vgrid(j,i,ilev,ivw) &
+                              * vgrid(j,i,ilev,ivt) * fact / p(ilev)
                       end if
                    enddo
                 enddo
@@ -172,9 +174,11 @@ PROGRAM g2vis5d
              do ilev=1,outnl(ivw)
                 do j=nlat+1-clat2,nlat+1-clat1
                    do i=clon1,clon2
-                      if((vgrid(j,i,ilev,ivw).ne.undef).and.(vgrid(j,i,ilev,ivt).ne.undef)) then
+                      if(  (vgrid(j,i,ilev,ivw).ne.undef).and.&
+                           (vgrid(j,i,ilev,ivt).ne.undef)) then
                          ! dP = - dz * g * P / R * T
-                         vgrid(j,i,ilev,ivw) = - vgrid(j,i,ilev,ivw) * fact * p(ilev) / vgrid(j,i,ilev,ivt)
+                         vgrid(j,i,ilev,ivw) = - vgrid(j,i,ilev,ivw) &
+                              * fact * p(ilev) / vgrid(j,i,ilev,ivt)
                       end if
                    enddo
                 enddo
