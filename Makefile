@@ -23,7 +23,7 @@ CFLAGS = -c -O0 -DUNDERSCORE -Wall -g -fbounds-check
 
 # === FORTRAN90 COMPILER ---
 
-FFLAGS = -c -O0 -Wall  -g -fbounds-check
+FFLAGS = -c -O0 -Wall  -g -fbounds-check 
 #FLOAD = -O0 -Wl,--rpath -Wl,/opt/NECcomp/compiler90/ia64/lib
 FLOAD = -O0
 F77 = gfortran

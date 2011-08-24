@@ -14,6 +14,9 @@ MODULE VIS5D
     ! Time/date stamps
     INTEGER :: itime_stamp(max_time),idate_stamp(max_time)
 
+    ! v5d undefined, from v5d.h
+    real, parameter :: vundef=1.0e35
+
     ! Output vertical coordinate
     REAL, ALLOCATABLE, DIMENSION(:) :: vert_arg
 
@@ -27,6 +30,7 @@ MODULE VIS5D
     REAL, ALLOCATABLE, DIMENSION(:,:,:,:) :: vgrid ! for output
 
     INTEGER :: clon1, clon2, clat1, clat2, cz
+    INTEGER :: vnlon, vnlat
 
 CONTAINS
 
@@ -75,7 +79,7 @@ CONTAINS
         write(*,*) 'nlev=',nlev
         write(*,*) 'ntime=',ntime
 
-        id = IDAYS(idate)
+        id = IDAYS(iyear,idate)
         it = ISECS(itime)
         do i=1,ntime
            idate_stamp(i)=IYYDDD(id)
@@ -172,18 +176,19 @@ CONTAINS
         icompress=1 
 
         !     - Create VIS5D file -
-print*,'passou 2'
-        iflag=v5dcreate(v5dfile,ntime,nvar,clat2-clat1+1,clon2-clon1+1, &
+        vnlon=clon2-clon1+1
+        vnlat=clat2-clat1+1
+        iflag=v5dcreate(v5dfile,ntime,nvar,vnlat,vnlon, &
              outnl,cname,itime_stamp,idate_stamp,icompress, &
              iproj,proj_arg,ivert,vert_arg)
-print*,'passou 3'
         if(iflag.ne.1) then
            print*, 'v5dcreate error: ', iflag
            stop
         endif
 
         !     - Dynamically allocate memory for grids -
-        ALLOCATE(vgrid(nlat,nlon,nlev,nvar))
+        print*,'allocate vgrid=',vnlat,vnlon,nlev,nvar
+        ALLOCATE(vgrid(vnlat,vnlon,nlev,nvar))
 
     END SUBROUTINE INIT_VIS5D
 

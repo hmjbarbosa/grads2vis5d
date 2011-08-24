@@ -36,7 +36,7 @@ MODULE grads
     INTEGER :: ivw ! index of vertical velocity variable 
 
     ! Initial Time and Date
-    INTEGER :: idate, itime
+    INTEGER :: iyear, idate, itime
     INTEGER :: iscs, idys
 
     ! Number of time-steps
@@ -293,8 +293,8 @@ CONTAINS
               read(aword,*) ntime
               print*, 'ntime: ', ntime
               call lgetarg(ifctl,iline,4,aword)
-              call get_time(trim(aword),idate,itime)
-              print*, 'idate, itime: ', idate, itime
+              call get_time(trim(aword),iyear,idate,itime)
+              print*, 'iyear, idate, itime: ', iyear, idate, itime
               call lgetarg(ifctl,iline,5,aword)
               call get_tinc(aword, idys, iscs)
               print*, 'idys, iscs: ', idys, iscs
@@ -318,6 +318,7 @@ CONTAINS
         close(ifctl)
 
         ! Open Binary input file
+        print*,'allocating :',nlon,nlat        
         ALLOCATE(ggrid(nlon,nlat))
 
         if (sequ) then
@@ -392,15 +393,15 @@ CONTAINS
     end subroutine get_tinc
 
     !----------------------------------------------------------------------
-    !       Returns start date and time as yyddd and hhmmss
+    !       Returns start date and time as yyyy, ddd and hhmmss
     !
-    subroutine get_time(string, idate, itime)
+    subroutine get_time(string, iyear, idate, itime)
         IMPLICIT NONE
 
-        INTEGER, INTENT(OUT) :: idate, itime
+        INTEGER, INTENT(OUT) :: iyear, idate, itime
 
         INTEGER :: ihh, idd, imm, iyy, leap
-        INTEGER :: i,i2,k
+        INTEGER :: i,i2,i3,i4,k
 
         character*(*) string
         string=trim(string)
@@ -495,23 +496,24 @@ CONTAINS
            endif
            iyy = 10 * i + i2
         else if (last_nblank(string) .eq. k+6) then
-           if (string(k+3:k+4) .ne. '19') then
-              print*, 'bad date(7): ', string
-              print*, 'string=',trim(string)
-              print*, 'i,i2,k=',i,i2,k
-              print*, 'last_nblank(string)=',last_nblank(string)
-              stop
-           endif
-           i = num(string(k+5:k+5))
-           i2 = num(string(k+6:k+6))
-           if (i .lt. 0 .or. i .gt. 9 .or. i2 .lt. 0 .or. i2 .gt. 9) then
+           !hmjb if (string(k+3:k+4) .ne. '19') then
+           !hmjb    print*, 'bad date(7): ', string
+           !hmjb    print*, 'string=',trim(string)
+           !hmjb    print*, 'i,i2,k=',i,i2,k
+           !hmjb    print*, 'last_nblank(string)=',last_nblank(string)
+           !hmjb    stop
+           !hmjb endif
+           i = num(string(k+3:k+3))
+           i2 = num(string(k+4:k+4))
+           i3 = num(string(k+5:k+5))
+           i4 = num(string(k+6:k+6))
+           if ( i  .lt. 0 .or. i  .gt. 9 .or. i2 .lt. 0 .or. i2 .gt. 9 .or. &
+                i3 .lt. 0 .or. i3 .gt. 9 .or. i4 .lt. 0 .or. i4 .gt. 9) then
               print*, 'bad date(8): ', string
-              print*, 'i,i2,k=',i,i2,k
+              print*, 'i,i2,i3,i4,k=',i,i2,i3,i4,k
               stop
            endif
-           iyy = 10 * i + i2
-           !          read(string(k+5:k+6),'(i)') iyy
-           print*, 'iyy=',iyy
+           iyy = ((10 * i + i2)*10 + i3)*10 +i4
         else
            print*, 'bad date(9): ', string, last_nblank(string), k
            stop
@@ -563,7 +565,9 @@ CONTAINS
            print*, 'bad date(10): ', string
            stop
         endif
-        idate = 1000 * iyy + idd
+        !hmjb idate = 1000 * iyy + idd
+        iyear = iyy
+        idate = idd
 
         return
     end subroutine get_time

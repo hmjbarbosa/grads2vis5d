@@ -5,7 +5,7 @@ MODULE CONSTANTS
     
     ! Sizes
     INTEGER, PARAMETER :: max_var=200
-    INTEGER, PARAMETER :: max_time=1000
+    INTEGER, PARAMETER :: max_time=400
 
     ! Physical Parameters
     REAL, PARAMETER :: H = 7.2 ! Lapse ratio (K/km)

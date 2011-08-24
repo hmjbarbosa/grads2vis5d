@@ -1,18 +1,22 @@
 &vis5d
-v5dfile='result_g1.v5d',
+v5dfile='interim.v5d',
 outzdef=2, ! (1) press (2) km (3) m
 ilon=270.,
 flon=330.,
-ilat=-60.,
+ilat=-30.,
 flat=20.,
-maxz=1., ! lowest pressure (mb) to consider (hence maximum altitude reached)
+maxz=1., ! lowest pressure (mb) to consider (max alt)
 /
 
 &grads
-ctlfile='result_g1.ctl',
-inzdef=3, ! (1) press (2) km (3) m
+ctlfile='interim.bin.ctl',
+inzdef=1, ! (1) press (2) km (3) m
 /
 
 &options
-convw=0,
+convw=1, ! 0- none
+         ! 1- from Pa/s to m/s
+         ! 2- from Pa/s to cm/s
+         ! 3- from m/s to Pa/s
+         ! 4- from cm/s to Pa/s
 /

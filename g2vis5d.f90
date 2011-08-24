@@ -21,7 +21,7 @@ PROGRAM g2vis5d
 ! COUNTERS
 !--------------------------------------------------------------------------
 
-    INTEGER :: i, j, narg
+    INTEGER :: i, j, vi, vj, narg
     INTEGER :: ivar, ilev, it
 
     real :: fact
@@ -118,50 +118,82 @@ PROGRAM g2vis5d
     igrid=0
     zmin = 1.0e10
     zmax = -1.0e10
+
     do it=1,ntime
-       vgrid=0.0
+       vgrid=vundef
+
        ! read all data for current time
        do ivar=1,nvar
           do ilev=1,nl(ivar)
              irec=irec+1
+
+             ggrid=undef
              if (sequ) then
                 read(ifbin) ggrid
              else
                 read(ifbin,rec=irec) ggrid
              endif
+
+             ! take care of undefs
+             where (ggrid.eq.undef) ggrid=vundef
+
+             ! copy only selected data to final vgrid
              do j=clat1,clat2
+                vj=j-clat1+1
                 do i=clon1,clon2
+                   vi=i-clon1+1
+
                    if (yrev) then
-                      vgrid(j,i,ilev,ivar)=ggrid(i,j)
+                      vgrid(vj,vi,ilev,ivar)=ggrid(i,j)
                    else
-                      vgrid(nlat+1-j,i,ilev,ivar)=ggrid(i,j)
+                      vgrid(vj,vi,ilev,ivar)=ggrid(i,nlat+1-j)
                    endif
-                   if(ggrid(i,j).ne.undef) then
-                      if (ggrid(i,j) .lt. zmin(ivar)) then
-                         zmin(ivar) = ggrid(i,j)
+                enddo
+             enddo
+          enddo
+       enddo ! end loop over variable reading
+
+       ! check max/min values
+       do ivar=1,nvar
+          do ilev=1,outnl(ivar)
+             do vj=1,vnlat
+                do vi=1,vnlon
+                   if(vgrid(vj,vi,ilev,ivar).ne.vundef) then
+                      if (vgrid(vj,vi,ilev,ivar).lt. zmin(ivar)) then
+                         zmin(ivar) = vgrid(vj,vi,ilev,ivar)
                       endif
-                      if (ggrid(i,j) .gt. zmax(ivar)) then
-                         zmax(ivar) = ggrid(i,j)
+                      if (vgrid(vj,vi,ilev,ivar) .gt. zmax(ivar)) then
+                         zmax(ivar) = vgrid(vj,vi,ilev,ivar)
                       endif
                    end if
                 enddo
              enddo
           enddo
        enddo
+
        ! convert pa/s to m/s
        if (convw>0) then
+          if (ivt.lt.1) then
+             print*,'Cant convert W-vel without a variable named T (temp in Kelvin)'
+             stop
+          endif
+          if (ivw.lt.1) then
+             print*,'Cant convert W-vel without a variable named W (really??)'
+             stop
+          endif
+
           ! from pressure to length
           if (convw==1.or.convw==2) then
              if (convw==1) fact=R/g/100.0
              if (convw==2) fact=R/g
              do ilev=1,outnl(ivw)
-                do j=nlat+1-clat2,nlat+1-clat1
-                   do i=clon1,clon2
-                      if(  (vgrid(j,i,ilev,ivw).ne.undef).and. &
-                           (vgrid(j,i,ilev,ivt).ne.undef)) then
+                do vj=1,vnlat
+                   do vi=1,vnlon
+                      if(  (vgrid(vj,vi,ilev,ivw).ne.vundef).and. &
+                           (vgrid(vj,vi,ilev,ivt).ne.vundef)) then
                          ! dz = - dP * R * T / g P
-                         vgrid(j,i,ilev,ivw) = - vgrid(j,i,ilev,ivw) &
-                              * vgrid(j,i,ilev,ivt) * fact / p(ilev)
+                         vgrid(vj,vi,ilev,ivw) = - vgrid(vj,vi,ilev,ivw) &
+                              * vgrid(vj,vi,ilev,ivt) * fact / p(ilev)
                       end if
                    enddo
                 enddo
@@ -172,38 +204,40 @@ PROGRAM g2vis5d
              if (convw==3) fact=g*100.0/R
              if (convw==4) fact=g/R
              do ilev=1,outnl(ivw)
-                do j=nlat+1-clat2,nlat+1-clat1
-                   do i=clon1,clon2
-                      if(  (vgrid(j,i,ilev,ivw).ne.undef).and.&
-                           (vgrid(j,i,ilev,ivt).ne.undef)) then
+                do vj=1,vnlat
+                   do vi=1,vnlon
+                      if(  (vgrid(vj,vi,ilev,ivw).ne.vundef).and.&
+                           (vgrid(vj,vi,ilev,ivt).ne.vundef)) then
                          ! dP = - dz * g * P / R * T
-                         vgrid(j,i,ilev,ivw) = - vgrid(j,i,ilev,ivw) &
-                              * fact * p(ilev) / vgrid(j,i,ilev,ivt)
+                         vgrid(vj,vi,ilev,ivw) = - vgrid(vj,vi,ilev,ivw) &
+                              * fact * p(ilev) / vgrid(vj,vi,ilev,ivt)
                       end if
                    enddo
                 enddo
              enddo
           endif
-          ! check new max/min values
+
+          ! check new max/min values for W-vel just converted
+          ! stores data onto position nvar+1 for future reference
           do ilev=1,outnl(ivw)
-             do j=nlat+1-clat2,nlat+1-clat1
-                do i=clon1,clon2
-                   if(vgrid(j,i,ilev,ivw).ne.undef) then
-                      if (vgrid(j,i,ilev,ivw).lt. zmin(nvar+1)) then
-                         zmin(nvar+1) = vgrid(j,i,ilev,ivw)
+             do vj=1,vnlat
+                do vi=1,vnlon
+                   if(vgrid(vj,vi,ilev,ivw).ne.vundef) then
+                      if (vgrid(vj,vi,ilev,ivw).lt. zmin(nvar+1)) then
+                         zmin(nvar+1) = vgrid(vj,vi,ilev,ivw)
                       endif
-                      if (vgrid(j,i,ilev,ivw) .gt. zmax(nvar+1)) then
-                         zmax(nvar+1) = vgrid(j,i,ilev,ivw)
+                      if (vgrid(vj,vi,ilev,ivw) .gt. zmax(nvar+1)) then
+                         zmax(nvar+1) = vgrid(vj,vi,ilev,ivw)
                       endif
                    end if
                 enddo
              enddo
           enddo
-       endif
+       endif! end if (convw>0)
 
        ! write data in v5d format
        do ivar=1,nvar
-          iflag=v5dwrite(it,ivar,vgrid(nlat+1-clat2:nlat+1-clat1,clon1:clon2,1:outnl(ivar),ivar))
+          iflag=v5dwrite(it,ivar,vgrid(:, :, 1:outnl(ivar), ivar))
           igrid=igrid+1
           write(*,'(''Wrote grid '',i4,''   status: '',i4)') igrid,iflag
        enddo

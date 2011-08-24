@@ -19,9 +19,13 @@ all on newer linux systems.
 
 ABOUT THIS PROJECT
 
-I have changed everything to Fortran 90, divided the original file
-into meanfull modules and added new functionalities like pressure to
-height conversion. Now it works with gfortran standard.
+So what did I do? A series of improvements:
+
+- everything to Fortran 90
+- divided the original file into meanfull modules
+- conversion from pressure to height
+- years>2000
+- works with gfortran
 
 ABOUT ME
 
