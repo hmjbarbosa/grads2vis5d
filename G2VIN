@@ -19,4 +19,7 @@ convw=1, ! 0- none
          ! 2- from Pa/s to cm/s
          ! 3- from m/s to Pa/s
          ! 4- from cm/s to Pa/s
+icompress=4, !1-byte (default)
+             !2-byte
+             !4-byte (no compression)
 /

@@ -29,7 +29,8 @@ PROGRAM g2vis5d
     integer :: convw
     LOGICAL :: lexist, iter
 
-    namelist /options/ convw
+    ! icompress is defined inside vis5d
+    namelist /options/ convw, icompress
 
 !--------------------------------------------------------------------------
 ! EXTERNAL FUNCTIONS
@@ -60,6 +61,7 @@ PROGRAM g2vis5d
 
        open(15,file=trim(nlist),form='formatted',status='old',action='read')
        convw=0
+       icompress=1
        read(15,options)
        close(15)
        

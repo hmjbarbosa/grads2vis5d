@@ -34,7 +34,8 @@ MODULE VIS5D
 
 CONTAINS
 
-    SUBROUTINE INIT_VIS5D(iter,infile) !(nlev,ntime,idate,itime,iscs,idys)
+    SUBROUTINE INIT_VIS5D(iter,infile)
+!(nlev,ntime,idate,itime,iscs,idys)
         USE Grads
         IMPLICIT NONE
         logical, intent(in) :: iter
@@ -173,7 +174,8 @@ CONTAINS
         enddo
 
         !     - compress to 1 byte
-        icompress=1 
+        ! now defined outside
+        !icompress=1 
 
         !     - Create VIS5D file -
         vnlon=clon2-clon1+1

@@ -26,6 +26,7 @@ So what did I do? A series of improvements:
 - conversion from pressure to height
 - years>2000
 - works with gfortran
+- allows for changing the compression rate
 
 ABOUT ME
 
