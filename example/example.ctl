@@ -7,7 +7,7 @@ dtype grib 255
 options yrev
 ydef 75 linear -70.500000 1.5
 xdef 81 linear 240.000000 1.500000
-tdef 40 linear 00Z01jan2011 6hr
+tdef 4 linear 00Z01jan2011 6hr
 *  z has 13 levels, for prs
 zdef 13 levels
 1000 950 900 850 800 750 700 600 500 400 300 200 100
