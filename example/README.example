@@ -1,0 +1,23 @@
+This directory contains an example file for processing with
+grads2vis5d and thereafter with Vis5d. It is a chunk of ECMWF ERA
+Interim reanalysis data for Latin America. 3D wind field, humidity,
+temperature and cloud cover are provided at the following resolution:
+
+== example.grib ==
+ydef 75 linear -70.500000 1.5
+xdef 81 linear 240.000000 1.500000
+tdef 40 linear 00Z01jan2011 6hr
+zdef 13 levels 1000 950 900 850 800 750 700 600 500 400 300 200 100
+
+CTL and index were created by:
+
+grib2ctl.pl -no_prs example.grib > example.ctl
+gribmap -e -i example.ctl
+
+You can open the CTL with grads and check the fields for yourself. In
+order to convert it to *.v5d format, you need a plain grads-binary
+file. Just run the script:
+
+./interim2bin.sh
+
+and you will have the uncompressed binary and the ctl.

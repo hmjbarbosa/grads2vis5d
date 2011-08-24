@@ -27,6 +27,8 @@ So what did I do? A series of improvements:
 - years>2000
 - works with gfortran
 - allows for changing the compression rate
+- redimension vgrid to match final size
+- added example files
 
 ABOUT ME
 
